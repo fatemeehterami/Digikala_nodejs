@@ -4,10 +4,11 @@ npm install
 run server:
 node server.js
 
-install postges:
-dbname:Digikala
-password: '123admin'
-port: 5432
+install postgreSql:
+ https://www.postgresql.org/download/
+ dbname:Digikala
+ password: '123admin'
+ port: 5432
 
 swagger:
 http://localhost:3000/api-docs/#/
