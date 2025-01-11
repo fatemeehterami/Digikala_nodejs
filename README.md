@@ -1,3 +1,5 @@
+install nodejs and npm please after that do another steps
+
 install packages:
 npm install
 
