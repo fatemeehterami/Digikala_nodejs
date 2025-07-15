@@ -1,6 +1,6 @@
 const express = require('express');
-const { sendVerificationCode, verifyCode } = require('../controllers/authController');
-const verifyToken = require('../middleware/verifyToken');
+const { sendVerificationCode, verifyCode, checkMobile } = require('../controllers/authController');
+const { verifyToken, blacklistToken } = require('../middleware/verifyToken');
 
 const router = express.Router();
 
@@ -80,5 +80,63 @@ router.post('/send-code', sendVerificationCode);
  */
 router.post('/verify-code', verifyCode);
 
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout the current user
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User successfully logged out
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User logged out successfully.
+ *       401:
+ *         description: Unauthorized or already logged out
+ */
+router.post('/logout', verifyToken, (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (token) {
+      blacklistToken(token);
+    }
+    return res.status(200).json({ message: 'User logged out successfully.' });
+  });
+  
 
+/**
+ * @swagger
+ * /auth/check-mobile:
+ *   get:
+ *     summary: Check if mobile number exists
+ *     tags: [Authentication]
+ *     parameters:
+ *       - in: query
+ *         name: mobile
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Mobile number to check
+ *     responses:
+ *       200:
+ *         description: Returns whether the mobile exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 exists:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid mobile number format
+ */
+router.get('/check-mobile', checkMobile);
+  
 module.exports = router;

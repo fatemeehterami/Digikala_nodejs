@@ -1,7 +1,15 @@
 const jwt = require('jsonwebtoken');
-const { getUserByMobileAndCode, generateVerificationCode,createUserWithCode } = require('../models/userModel');
+const { getUserByMobileAndCode, generateVerificationCode,createUserWithCode,checkMobileExists  } = require('../models/userModel');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_default_jwt_secret';
+
+function validateMobile(mobile) {
+    return /^09\d{9}$/.test(mobile);
+  }
+  
+function sendError(res, status, message) {
+    return res.status(status).json({ message });
+}
 
 const sendVerificationCode = async (req, res) => {
     const { mobile } = req.body;
@@ -59,4 +67,20 @@ const verifyCode = async (req, res) => {
     }
 };
 
-module.exports = { sendVerificationCode, verifyCode };
+const checkMobile = async (req, res) => {
+    const { mobile } = req.query;
+  
+    if (!mobile || !validateMobile(mobile)) {
+      return sendError(res, 400, 'Invalid mobile number');
+    }
+  
+    try {
+      const exists = await checkMobileExists(mobile);
+      return res.status(200).json({ exists });
+    } catch (err) {
+      console.error('Controller Error:', err.message);
+      return sendError(res, 500, 'Server error');
+    }
+  };
+
+module.exports = { sendVerificationCode, verifyCode,checkMobile };

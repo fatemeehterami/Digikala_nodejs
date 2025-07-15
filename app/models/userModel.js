@@ -44,4 +44,23 @@ async function getUserByMobileAndCode(mobile, code) {
     }
 }
 
-module.exports = { createUserWithCode, getUserByMobileAndCode, generateVerificationCode };
+async function checkMobileExists(mobile) {
+    try {
+      const res = await pool.query(
+        `
+        SELECT 1 FROM users
+        WHERE mobile = $1
+        LIMIT 1
+        `,
+        [mobile]
+      );
+  
+      return res.rowCount > 0;
+    } catch (err) {
+      console.error('Database Error:', err.message);
+      throw err;
+    }
+  }
+  
+
+module.exports = { createUserWithCode, getUserByMobileAndCode, generateVerificationCode,checkMobileExists };
