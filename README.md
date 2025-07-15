@@ -40,7 +40,7 @@ node server.js
 1. Download and install PostgreSQL from the [official PostgreSQL website](https://www.postgresql.org/download/).
 2. Create a new database with the following credentials:
    - **Database Name**: `Digikala`
-   - **Password**: `123admin`
+   - **Password**: `123456`
    - **Port**: `5432`
 
 ### 5. API Documentation
