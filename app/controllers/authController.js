@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { getUserByMobileAndCode, generateVerificationCode,createUserWithCode,checkMobileExists  } = require('../models/userModel');
+const { getUserByMobileAndCode, generateVerificationCode,createUserWithCode,checkMobileExists, getUserByMobile  } = require('../models/userModel');
+const pool = require('../config/db');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_default_jwt_secret';
 
@@ -83,4 +84,59 @@ const checkMobile = async (req, res) => {
     }
   };
 
-module.exports = { sendVerificationCode, verifyCode,checkMobile };
+  const registerUser = async (req, res) => {
+    const { mobile, firstname, lastname, nationalcode, password, dateofbirth, email } = req.body;
+  
+    if (!mobile || !firstname || !lastname || !nationalcode || !password || !dateofbirth || !email) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+  
+    try {
+      const query = `
+        UPDATE users
+        SET firstname = $1,
+            lastname = $2,
+            nationalcode = $3,
+            password = $4,
+            dateofbirth = $5,
+            email = $6
+        WHERE mobile = $7
+        RETURNING *;
+      `;
+      const values = [firstname, lastname, nationalcode, password, dateofbirth, email, mobile];
+  
+      const result = await pool.query(query, values);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'User not found with this mobile' });
+      }
+  
+      return res.status(200).json({
+        message: 'User registered successfully',
+        user: result.rows[0],
+      });
+    } catch (err) {
+      console.error('Register Error:', err.message);
+      return res.status(500).json({ message: 'Internal server error', error: err.message });
+    }
+  };
+  const getUserProfile = async (req, res) => {
+    const { mobile } = req.query;
+  
+    if (!mobile) {
+      return res.status(400).json({ message: 'Mobile is required' });
+    }
+  
+    try {
+      const user = await getUserByMobile(mobile);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ message: 'Server error', error: err.message });
+    }
+  };  
+
+module.exports = { sendVerificationCode, verifyCode,checkMobile,registerUser,getUserProfile };

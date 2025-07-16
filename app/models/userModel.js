@@ -61,6 +61,21 @@ async function checkMobileExists(mobile) {
       throw err;
     }
   }
-  
+  async function getUserByMobile(mobile) {
+    try {
+      const res = await pool.query(
+        `
+        SELECT * FROM users
+        WHERE mobile = $1
+        `,
+        [mobile]
+      );
+      return res.rows[0];
+    } catch (err) {
+      console.error('Database Error:', err.message);
+      throw err;
+    }
+  }
+   
 
-module.exports = { createUserWithCode, getUserByMobileAndCode, generateVerificationCode,checkMobileExists };
+module.exports = { createUserWithCode, getUserByMobileAndCode, generateVerificationCode,checkMobileExists,getUserByMobile };
