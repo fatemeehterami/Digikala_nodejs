@@ -87,7 +87,7 @@ const checkMobile = async (req, res) => {
   const registerUser = async (req, res) => {
     const { mobile, firstname, lastname, nationalcode, password, dateofbirth, email } = req.body;
   
-    if (!mobile || !firstname || !lastname || !nationalcode || !password || !dateofbirth || !email) {
+    if (!mobile || !firstname || !lastname || !nationalcode || !password ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
   
