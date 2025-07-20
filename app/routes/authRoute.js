@@ -182,6 +182,9 @@ router.get('/check-mobile', checkMobile);
  *                 type: string
  *                 format: email
  *                 example: "fateme@gmail.com"
+ *               address:
+ *                 type: string
+ *                 example: "تهران"
  *     responses:
  *       200:
  *         description: User registered successfully

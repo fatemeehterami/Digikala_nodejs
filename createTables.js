@@ -8,6 +8,7 @@ const createUsersTable = `
     password VARCHAR(8),
     dateofbirth DATE,
     email VARCHAR(255) UNIQUE,
+    address VARCHAR(255),
     verification_code VARCHAR(6)
   );
 `;

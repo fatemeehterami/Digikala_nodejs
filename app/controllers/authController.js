@@ -85,9 +85,9 @@ const checkMobile = async (req, res) => {
   };
 
   const registerUser = async (req, res) => {
-    const { mobile, firstname, lastname, nationalcode, password, dateofbirth, email } = req.body;
+    const { mobile, firstname, lastname, nationalcode, password, dateofbirth, email , address } = req.body;
   
-    if (!mobile || !firstname || !lastname || !nationalcode || !password ) {
+    if (!mobile || !firstname || !lastname || !nationalcode || !password || !address) {
       return res.status(400).json({ message: 'All fields are required' });
     }
   
@@ -99,11 +99,12 @@ const checkMobile = async (req, res) => {
             nationalcode = $3,
             password = $4,
             dateofbirth = $5,
-            email = $6
-        WHERE mobile = $7
+            email = $6,
+            address = $7
+        WHERE mobile = $8
         RETURNING *;
       `;
-      const values = [firstname, lastname, nationalcode, password, dateofbirth, email, mobile];
+      const values = [firstname, lastname, nationalcode, password, dateofbirth, email, address, mobile];
   
       const result = await pool.query(query, values);
   
